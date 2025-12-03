@@ -53,7 +53,11 @@ function App() {
         <aside>
           <h1>Prueba técnica de React</h1>
           <h2>Anadir y eliminar elementos de una lista </h2>
-          <form onSubmit={handleSubmit}>
+          <form
+            onSubmit={handleSubmit}
+            aria-label="Anadir elementos a la lista"
+            role="form"
+          >
             <label>
               Elemento a introducir:
               <input
