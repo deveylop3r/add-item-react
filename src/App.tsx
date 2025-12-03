@@ -1,21 +1,23 @@
-import { useState } from "react";
 import "./App.css";
+import Item from "./components/Item";
+import { useItems } from "./hooks/useItems";
+import useSeo from "./hooks/useSeo";
 
-type ItemId = `${string}-${string}-${string}-${string}-${string}`;
-interface Item {
+export type ItemId = `${string}-${string}-${string}-${string}-${string}`;
+
+export interface Item {
   id: ItemId;
   timestamp: number;
   text: string;
 }
 
-/* const INITIAL_ITEMS = [
-  { id: crypto.randomUUID(), timestamp: Date.now(), text: "Videojuegos" },
-  { id: crypto.randomUUID(), timestamp: Date.now(), text: "Libros" },
-  { id: crypto.randomUUID(), timestamp: Date.now(), text: "Muebles" },
-  { id: crypto.randomUUID(), timestamp: Date.now(), text: "Ropa" },
-]; */
 function App() {
-  const [items, setItems] = useState<Item[]>([]);
+  const { items, addItem, handleDelete } = useItems();
+  useSeo({
+    title: `[${items.length}] Prueba técnica de React`,
+    description: "Anadir y eliminar elementos de una lista",
+  });
+  /*   const [items, setItems] = useState<Item[]>([]);*/
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -31,21 +33,16 @@ function App() {
     const isInput = inputElement instanceof HTMLInputElement;
     if (!isInput || inputElement == null) return;
 
-    const newItem: Item = {
-      id: crypto.randomUUID(),
-      text: inputElement.value,
-      timestamp: Date.now(),
-    };
-    setItems((prevItems) => [...prevItems, newItem]);
+    addItem(inputElement.value);
 
     inputElement.value = "";
   };
 
-  const handleDelete = (id: ItemId) => {
+  /*   const handleDelete = (id: ItemId) => {
     return setItems((prevItems) =>
       prevItems.filter((currentItem) => currentItem.id !== id)
     );
-  };
+  };  */
 
   return (
     <>
@@ -80,16 +77,9 @@ function App() {
             </p>
           ) : (
             <ul>
-              {items.map((item) => {
-                return (
-                  <li key={item.id}>
-                    {item.text}
-                    <button onClick={() => handleDelete(item.id)}>
-                      Borrar
-                    </button>
-                  </li>
-                );
-              })}
+              {items.map((item) => (
+                <Item {...item} handleDelete={handleDelete} key={item.id} />
+              ))}
             </ul>
           )}
         </section>
